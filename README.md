@@ -25,7 +25,7 @@ A full-stack e-commerce application built with the MERN stack (MongoDB, Express,
 1.  **Clone the repository**
     ```bash
     git clone <repository-url>
-    cd ecom-project
+    cd UrbanCart
     ```
 
 2.  **Install Backend Dependencies**
@@ -83,3 +83,4 @@ The frontend will run on `http://localhost:5173`.
 
 **Customer Account:**
 - You can sign up for a new account on the login page.
+
