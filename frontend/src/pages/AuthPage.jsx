@@ -32,42 +32,42 @@ export default function AuthPage() {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  setLoading(true);
-  setError('');
+    e.preventDefault();
+    setLoading(true);
+    setError('');
 
-  try {
-    let userData;
+    try {
+      let userData;
 
-    if (isSignup) {
-      const { username, email, password } = formData;
-      if (!username || !email || !password) throw new Error('All fields required');
+      if (isSignup) {
+        const { username, email, password } = formData;
+        if (!username || !email || !password) throw new Error('All fields required');
 
-      userData = await authFetch('/auth/signup', 'POST', { username, email, password });
+        userData = await authFetch('/auth/signup', 'POST', { username, email, password });
 
-      const user = userData.user || userData.data || userData;
-      signup(user);
+        const user = userData.user || userData.data || userData;
+        signup(user);
 
-      navigate(user.role === 'admin' ? '/admin/dashboard' : '/');
+        navigate(user.role === 'admin' ? '/admin/dashboard' : '/');
 
-    } else {
-      const { username, password } = formData;
-      if (!username || !password) throw new Error('Username and password required');
+      } else {
+        const { username, password } = formData;
+        if (!username || !password) throw new Error('Username and password required');
 
-      userData = await authFetch('/auth/login', 'POST', { username, password });
+        userData = await authFetch('/auth/login', 'POST', { username, password });
 
-      const user = userData.user || userData.data || userData;
-      login(user);
+        const user = userData.user || userData.data || userData;
+        login(user);
 
-      navigate(user.role === 'admin' ? '/admin/dashboard' : '/');
+        navigate(user.role === 'admin' ? '/admin/dashboard' : '/');
+      }
+
+    } catch (err) {
+      setError(err.message || 'Auth failed');
+    } finally {
+      setLoading(false);
     }
-
-  } catch (err) {
-    setError(err.message || 'Auth failed');
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
 
 
@@ -101,7 +101,7 @@ export default function AuthPage() {
           marginBottom: '0.5rem',
           color: '#1f2937'
         }}>
-          {isSignup ? 'Join UrbanCart' : 'Welcome Back'}
+          {isSignup ? 'Join UrbanCart' : 'Welcome Back to UrbanCart'}
         </h2>
         <p style={{
           textAlign: 'center',
