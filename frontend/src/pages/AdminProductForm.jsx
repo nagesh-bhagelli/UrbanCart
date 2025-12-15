@@ -9,8 +9,8 @@ export default function AdminProductForm() {
   const isEdit = !!sku;
 
   const [form, setForm] = useState({
-    sku: '', name: '', category: '', brand: '', price: 0,
-    inventory: { stock: 0, warehouse: 'WH-1' }, specifications: {}, attributes: {}
+    sku: '', name: '', category: '', brand: '', price: 0, image: '',
+    inventory: { stock: 0, warehouse: 'WH-1' }, specifications: '{}', attributes: '{}'
   });
 
   useEffect(() => {
@@ -27,10 +27,11 @@ export default function AdminProductForm() {
         name: data.name,
         category: data.category,
         brand: data.brand,
+        image: data.image || '',
         price: data.price,
         inventory: data.inventory || { stock: 0, warehouse: 'WH-1' },
-        specifications: data.specifications || {},
-        attributes: data.attributes || {}
+        specifications: JSON.stringify(data.specifications || {}, null, 2),
+        attributes: JSON.stringify(data.attributes || {}, null, 2)
       });
     } catch (err) {
       alert('Error loading product');
@@ -40,13 +41,41 @@ export default function AdminProductForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (Number(form.price) <= 0) {
+      alert("Price must be greater than 0");
+      return;
+    }
+    if (Number(form.inventory.stock) <= 0) {
+      alert("Stock must be greater than 0");
+      return;
+    }
+
+    let parsedSpecs = {};
+    let parsedAttrs = {};
+
+    try {
+      parsedSpecs = JSON.parse(form.specifications);
+    } catch (err) {
+      alert("Invalid JSON in Specifications field");
+      return;
+    }
+
+    try {
+      parsedAttrs = JSON.parse(form.attributes);
+    } catch (err) {
+      alert("Invalid JSON in Attributes field");
+      return;
+    }
+
     const payload = {
       ...form,
       price: Number(form.price),
       inventory: {
         ...form.inventory,
         stock: Number(form.inventory.stock)
-      }
+      },
+      specifications: parsedSpecs,
+      attributes: parsedAttrs
     };
     try {
       if (isEdit) {
@@ -56,7 +85,7 @@ export default function AdminProductForm() {
         await createProduct(payload);
         alert('Created successfully');
       }
-      navigate('/admin/dashboard');
+      navigate('/admin/dashboard', { state: { tab: 'products' } });
     } catch (err) {
       alert('Error: ' + (err.response?.data?.error || err.message));
     }
@@ -119,6 +148,16 @@ export default function AdminProductForm() {
                   required
                 />
               </div>
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
+                <input
+                  type="url"
+                  placeholder="e.g., https://example.com/image.jpg"
+                  value={form.image}
+                  onChange={e => setForm({ ...form, image: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+                />
+              </div>
             </div>
           </section>
 
@@ -164,13 +203,8 @@ export default function AdminProductForm() {
                   <span className="text-xs text-gray-500">Key-value pairs for technical specs</span>
                 </div>
                 <textarea
-                  value={JSON.stringify(form.specifications, null, 2)}
-                  onChange={e => {
-                    try {
-                      const parsed = JSON.parse(e.target.value);
-                      setForm({ ...form, specifications: parsed });
-                    } catch { }
-                  }}
+                  value={form.specifications}
+                  onChange={e => setForm({ ...form, specifications: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition h-32 font-mono text-sm bg-gray-50"
                   placeholder='{ "Color": "Black", "Weight": "200g" }'
                 />
@@ -181,13 +215,8 @@ export default function AdminProductForm() {
                   <span className="text-xs text-gray-500">Selectable options like size or color</span>
                 </div>
                 <textarea
-                  value={JSON.stringify(form.attributes, null, 2)}
-                  onChange={e => {
-                    try {
-                      const parsed = JSON.parse(e.target.value);
-                      setForm({ ...form, attributes: parsed });
-                    } catch { }
-                  }}
+                  value={form.attributes}
+                  onChange={e => setForm({ ...form, attributes: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition h-32 font-mono text-sm bg-gray-50"
                   placeholder='{ "size": ["S", "M", "L"] }'
                 />

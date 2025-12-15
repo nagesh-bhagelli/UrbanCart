@@ -9,7 +9,7 @@ export default function AdminDashboard() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const [activeTab, setActiveTab] = useState(location.state?.tab || 'dashboard');
   const [summary, setSummary] = useState(null);
   const [lowStockProducts, setLowStockProducts] = useState([]);
   const [orders, setOrders] = useState([]);

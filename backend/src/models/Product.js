@@ -27,7 +27,8 @@ const productSchema = new Schema(
     name: { type: String, required: true },
     category: { type: String, index: true },
     brand: String,
-    price: { type: Number, min: 0, required: true },
+    image: { type: String },
+    price: { type: Number, min: 1, required: true },
     inventory: { type: inventorySchema, required: true },
     specifications: { type: Schema.Types.Mixed },
     attributes: { type: Schema.Types.Mixed }, // dynamic product attributes

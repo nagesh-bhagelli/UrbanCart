@@ -7,6 +7,7 @@ export default function App() {
   const { user, logout } = useAuth();
   const { items } = useCart();
   const navigate = useNavigate();
+  const isAdmin = user?.role === 'admin';
 
   const handleLogout = () => {
     logout();
@@ -31,23 +32,27 @@ export default function App() {
                     Admin
                   </Link>
                 )}
-                <Link
-                  to="/cart"
-                  className="relative flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:shadow-lg transition font-semibold"
-                >
-                  🛒
-                  {items.length > 0 && (
-                    <span className="absolute top-0 right-0 -translate-y-2 translate-x-2 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
-                      {items.length}
-                    </span>
-                  )}
-                </Link>
-                <Link
-                  to="/my-orders"
-                  className="px-4 py-2 text-gray-700 hover:text-indigo-600 font-semibold transition"
-                >
-                  My Orders
-                </Link>
+                {!isAdmin && (
+                  <>
+                    <Link
+                      to="/cart"
+                      className="relative flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:shadow-lg transition font-semibold"
+                    >
+                      🛒
+                      {items.length > 0 && (
+                        <span className="absolute top-0 right-0 -translate-y-2 translate-x-2 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
+                          {items.length}
+                        </span>
+                      )}
+                    </Link>
+                    <Link
+                      to="/my-orders"
+                      className="px-4 py-2 text-gray-700 hover:text-indigo-600 font-semibold transition"
+                    >
+                      My Orders
+                    </Link>
+                  </>
+                )}
                 <span className="text-gray-700 font-medium">Welcome, <span className="text-indigo-600">{user.username}</span></span>
                 <button
                   onClick={handleLogout}
